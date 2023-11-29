@@ -3,4 +3,7 @@ C:\Users\mouze\Desktop\practice\project\project\Header.cpp(9,23): warning C4267:
 C:\Users\mouze\Desktop\practice\project\project\Header.cpp(27,50): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
 C:\Users\mouze\Desktop\practice\project\project\Header.cpp(30,57): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
 C:\Users\mouze\Desktop\practice\project\project\Header.cpp(83,23): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+  project.cpp
+C:\Users\mouze\Desktop\practice\project\project\project.cpp(6,26): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+  Создание кода...
   project.vcxproj -> C:\Users\mouze\Desktop\practice\project\x64\Debug\project.exe

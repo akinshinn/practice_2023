@@ -54,4 +54,5 @@ void write(string file, vector<Point> above_points, vector<Point> below_points);
 void get_above_below_points(vector<Point>& above_points, vector<Point>& below_points, vector<Point> points);
 
 int partition(vector<Point>& a, int start, int end, bool increase = true);
+
 void quicksort(vector<Point>& a, int start, int end, bool increase = true);

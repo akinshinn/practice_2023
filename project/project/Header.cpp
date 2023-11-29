@@ -83,7 +83,6 @@ vector<Point> get_polygon(vector<Point> points, vector<Point> all_points) {
 	int n = points.size();
 	Point p1, p2;
 	res.push_back(points[0]);
-	cout << res.size() << endl;
 	for (int i = 0; i < n; i++) {
 		p1 = Point(points[i].x_ , points[i].y_);
 		for (int j = i+1; j < n; j++) {
