@@ -1,10 +1,9 @@
-#include <iostream>
-#include <vector>
-#include <fstream>
-#include <algorithm>
 #include "Header.h"
 
+
 using namespace std;
+
+// Получаем точки над и под прямой, проходящей через граничные точки(т.е. с мин. и макс. координатами по x)
 void get_above_below_points(vector<Point>& above_points, vector<Point>& below_points, vector<Point> points) {
 	int n = points.size();
 	double xmin = points[0].x_, ymin = points[0].y_;
@@ -17,16 +16,15 @@ void get_above_below_points(vector<Point>& above_points, vector<Point>& below_po
 			xmax = points[i].x_; ymax = points[i].y_;
 		}
 	}
-
 	for (int i = 0; i < n; i++) {
 		if (points[i].y_ >= get_y_coordinate(Point(xmin, ymin), Point(xmax, ymax), points[i].x_)) 
-			above_points.push_back(points[i]);
-		else below_points.push_back(points[i]);
+			above_points.emplace_back(points[i]);
+		else below_points.emplace_back(points[i]);
 	}
 
 	quicksort(above_points, 0, above_points.size()-1);
-	below_points.push_back(above_points[0]);
-	below_points.push_back(above_points[above_points.size() - 1]);
+	below_points.emplace_back(above_points[0]);
+	below_points.emplace_back(above_points[above_points.size() - 1]);
 	quicksort(below_points, 0, below_points.size()-1, false);
 
 }
@@ -77,18 +75,18 @@ void quicksort(vector<Point>& a, int start, int end, bool increase)
 	quicksort(a, pivot + 1, end, increase);
 }
 
-vector<Point> get_polygon(vector<Point> points, vector<Point> all_points) {
+vector<Point> get_polygon(const vector<Point>& local_points, const vector<Point>& all_points) {
 	std::vector<Point> res;
-	if (points.size() == 0) return res;
-	int n = points.size();
+	if (local_points.size() == 0) return res;
+	int n = local_points.size();
 	Point p1, p2;
-	res.push_back(points[0]);
+	res.emplace_back(local_points[0]);
 	for (int i = 0; i < n; i++) {
-		p1 = Point(points[i].x_ , points[i].y_);
+		p1 = Point(local_points[i].x_ , local_points[i].y_);
 		for (int j = i+1; j < n; j++) {
-			p2 = Point(points[j].x_, points[j].y_);
+			p2 = Point(local_points[j].x_, local_points[j].y_);
 			if (check_segment(p1, p2, all_points)) {
-				res.push_back(p2);
+				res.emplace_back(p2);
 				break;
 			};
 		}
@@ -96,36 +94,38 @@ vector<Point> get_polygon(vector<Point> points, vector<Point> all_points) {
 	return res;
 }
 
-bool check_segment(Point p1, Point p2, vector<Point> points) {
+bool check_segment(const Point& p1, const Point& p2, const vector<Point>& points) {
 	bool ArePreviousBeenUpper = 1; // все предыдущие были: 1 - выше, 0 - ниже
 	bool isUpperThanLine = 1;
 	double x, y_true, liney;
 	for (int i = 0; i < points.size(); i++) {
 		x = points[i].x_;
 		if (p1.x_ == p2.x_ && x == p1.x_) continue;
-		if (p1.x_ == p2.x_ && x < p1.x_) isUpperThanLine = 0;
-		if (p1.x_ == p2.x_ && x > p1.x_) isUpperThanLine = 1;
-		y_true = points[i].y_;
-		liney = get_y_coordinate(p1, p2, x);
-		if (y_true == liney) continue;
-		if (y_true > liney) isUpperThanLine = 1;
-		if (y_true < liney) isUpperThanLine = 0;
-		if (i == 0 && !isUpperThanLine) {
-			ArePreviousBeenUpper = 0;
-			continue;
+		if (p1.x_ == p2.x_ && x > p1.x_) {
+			if (isUpperThanLine != ArePreviousBeenUpper) return 0;
 		}
-		if ((isUpperThanLine && !ArePreviousBeenUpper) || (!isUpperThanLine && ArePreviousBeenUpper)) return 0;
-		
+		else {
+			y_true = points[i].y_;
+			liney = get_y_coordinate(p1, p2, x);
+			if (y_true == liney) continue;
+			isUpperThanLine = (y_true > liney);
+			if (i == 0 && !isUpperThanLine) {
+				ArePreviousBeenUpper = 0;
+				continue;
+			}
 
+			if (isUpperThanLine != ArePreviousBeenUpper) return 0;
+		}
+		
 	}
 	return 1;
 }
 
-double get_y_coordinate(Point p1, Point p2, double x) {
+double get_y_coordinate(const Point& p1, const Point& p2, double x) {
 	return (p2.y_ - p1.y_) / (p2.x_ - p1.x_) * (x - p1.x_) + p1.y_;
 };
 
-vector<Point> read(string file) {
+vector<Point> read(const string& file) {
 
 	std::ifstream in(file); 
 	int n;
@@ -136,25 +136,14 @@ vector<Point> read(string file) {
 		double x, y;
 		for (int i = 0; i < n; i++) {
 			in >> x >> y;
-			points.push_back(Point(x, y));
+			points.emplace_back(Point(x, y));
 		}
 	}
 	in.close();
 	return points;
 }
 
-void write(string file, vector<Segment> segments) {
-	ofstream out;
-	out.open(file);
-	if (out.is_open()) {
-		out.clear();
-		for (int i = 0; i < segments.size(); i++) {
-			out << segments[i].x1_ << " " << segments[i].y1_ << " " << segments[i].x2_ << " " << segments[i].y2_ << endl;
-		}
-	}
-}
-
-void write(string file, vector<Point> above_points, vector<Point> below_points) {
+void write(const string& file, const vector<Point>& above_points, const vector<Point>& below_points) {
 	ofstream out;
 	out.open(file);
 	if (out.is_open()) {
@@ -167,4 +156,15 @@ void write(string file, vector<Point> above_points, vector<Point> below_points) 
 			out << below_points[i].x_ << " " << below_points[i].y_ << endl;
 		}
 	}
+}
+
+vector<Point> gen_data(int n) {
+	int seed = time(0);
+	srand(seed);
+	vector<Point> data;
+	int max_value = 20, random_value;
+	for (int i = 0; i < n; i++) {
+		data.emplace_back(Point(rand() % max_value, rand() % max_value));
+	}
+	return data;
 }

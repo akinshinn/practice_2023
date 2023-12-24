@@ -13,6 +13,7 @@ struct Point {
 	double x_, y_;
 	Point() { x_ = 0; y_ = 0; }
 	Point(double x, double y) { x_ = x; y_ = y; };
+	Point(const Point& obj) { x_ = obj.x_; y_ = obj.y_; }
 	void print() {
 		cout << x_ << " " << y_ << endl;
 	}
@@ -38,15 +39,21 @@ struct MyVector {
 };
 
 int get_bottom_point(vector<Point>& points);
-vector<Point> Jarvis_algorithm(vector<Point> points);
-void write(string file, vector<Point> points);
+
+vector<Point> Jarvis_algorithm(const vector<Point>& points);
+
+void write(string file, const vector<Point>& points);
+
 vector<Point> readf(std::string file);
+
 double get_cos_angle_vectors(const Point& last_p, const Point& current_p, const Point& candidate_p);
-int get_min_cos_point(vector<Point>& points, Point p, int id_p, int id_lastp);
+
+int get_min_cos_point(vector<Point>& points, const Point& p, int id_p, int id_lastp);
+
 vector<Point> gen_data(int n);
 
 template <typename T>
-void out(vector<T> points) {
+void out(vector<T>& points) {
 	if (points.size() > 0) for (int i = 0; i < points.size(); i++) points[i].print();
 }
 

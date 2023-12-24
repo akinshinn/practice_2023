@@ -2,7 +2,7 @@
 #include "Header.h"
 
 const double eps = 1e-7;
-int get_bottom_point(vector<Point>& points) {
+int get_bottom_point(const vector<Point>& points) {
 	int bottom = 0;
 	int n = points.size();
 	for (int i = 1; i < n; i++) if (points[i].y_ < points[bottom].y_) bottom = i;
@@ -16,7 +16,7 @@ double get_cos_angle_vectors(const Point& last_p, const Point& current_p, const 
 	return a.scalar(b) / (a.len() * b.len());
 }
 
-int get_min_cos_point(vector<Point>& points, Point p, int id_p, int id_lastp) {
+int get_min_cos_point(const vector<Point>& points, const Point& p, int id_p, int id_lastp) {
 	double min = 2;
 	int res = -1;
 	double ccos;
@@ -33,19 +33,19 @@ int get_min_cos_point(vector<Point>& points, Point p, int id_p, int id_lastp) {
 	return res;
 }
 
-vector<Point> Jarvis_algorithm(vector<Point> points) {
+vector<Point> Jarvis_algorithm(const vector<Point>& points) {
 	vector<Point> res;
 	vector<int> res2;
 	int i = get_bottom_point(points);
-	res.push_back(points[i]);
-	res2.push_back(i);
+	res.emplace_back(points[i]);
+	res2.emplace_back(i);
 	do
 	{
 		Point cp = res[res.size() - 1];
 		if (res2.size() >= 2) i = get_min_cos_point(points, cp, res2[res2.size() - 1], res2[res2.size() - 2]);
 		else i = get_min_cos_point(points, cp, res2[res2.size() - 1], -1);
-		res.push_back(points[i]);
-		res2.push_back(i);
+		res.emplace_back(points[i]);
+		res2.emplace_back(i);
 
 
 	} while (res2[res2.size() - 1] != res2[0]);
@@ -62,14 +62,14 @@ vector<Point> readf(std::string file) {
 		double x, y;
 		for (int i = 0; i < n; i++) {
 			in >> x >> y;
-			points.push_back(Point(x, y));
+			points.emplace_back(Point(x, y));
 		}
 	}
 	in.close();
 	return points;
 }
 
-void write(string file, vector<Point> points) {
+void write(string file, const vector<Point>& points) {
 	ofstream out;
 	out.open(file);
 	if (out.is_open()) {
@@ -87,7 +87,7 @@ vector<Point> gen_data(int n) {
 	vector<Point> data;
 	int max_value = 20, random_value;
 	for (int i = 0; i < n; i++) {
-		data.push_back(Point(rand() % max_value, rand() % max_value));
+		data.emplace_back(Point(rand() % max_value, rand() % max_value));
 	}
 	return data;
 }
